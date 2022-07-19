@@ -1,0 +1,221 @@
+Session #1
+
+ifconfig
+
+wget -qO- https://get.docker.com/ | sh      //Download and run the script to                                               //install docker engine
+
+//if it does not succeed, run:
+
+sudo apt-get update -y
+
+//settings to India repo... I will show you!
+
+sudo systemctl enable docker
+
+sudo usermod -aG docker ebudibudi    //--to add the user ebudibudi to the group
+docker
+
+
+docker
+docker pull --help
+
+docker container ls    // if you get denied error, it is because you didn't log //out after sudo usermod -aG docker ebudibudi
+
+docker system info  //to see the system info in detail
+docker version   //to see the docker version info
+
+docker image ls
+
+docker ps        to show the running container
+docker ps -a    to show all containers including stopped containers...
+
+ifconfig    //NB: docker will get a IP address
+
+docker pull alpine:latest 
+
+docker images
+docker container ls  //obviusly no containers running at the moment
+docker run -it alpine:latest  //to take you to the shell of the container. -t                               //means interactive mode
+
+inside the container shell: type: uname -a
+                            type: ifconfig  // to see the IP address
+
+to get out of the container shell: ctl+PQ
+
+docker container ls
+
+docker container exec -it blissful_payne /bin/sh  //to get in to the running                                                   //container
+
+docker container stop blissful_payne               //to stop the container
+docker container ls
+
+docker container rm blissful_payne                //to remove the container
+
+docker container start blissful_payne              //to start the container
+
+
+Session #2
+
+To pull another image
+
+docker pull httpd
+
+docker run -dit --name ebudibudi -p 8080:80 -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+
+//open the browser-localhost:8080
+
+small assignment: to pull the centos image from docker
+#docker pull centos:7
+
+// we are creating containers using docker images created my someone else.
+
+
+
+open a file using any editor on ubuntu host:
+d
+nano Dockerfile
+
+FROM busybox
+MAINTAINER budibudi <emmanuexposeCEITelbudibudi@gmail.com>
+ADD index.html /www/index.html
+EXPOSE 8000
+#Create a webserver and sleep forever
+CMD httpd -p 8000 -h /www; tail -f /dev/null
+
+NB: we just created a dockerfile to be an image for us.
+
+before we build the file to be an image using build command
+
+
+
+step 2: we are to Create a index.html file
+
+<html>
+<body>
+
+<h2>CEIT, UPNG, SysAdmin</h2>
+
+<p>Button:</p>
+
+<button>Click me</button>
+<body>
+</html>
+
+
+#docker build -t webserver .
+docker image
+docker container ls
+
+docker run -d --name ceit -p 3000:8000 webserver
+
+on the host server browser: localhost:3000
+
+
+Session 3:
+
+Step 3: Tomorrow if you wanna the entire world to see your own images, push
+ own image to docker hub..
+
+docker login
+
+docker image tag webserver:latest budibudi/ceit   //renaming the image
+docker container ls
+
+docker image push budibudi/ceit:latest
+
+
+What is the advantage of having an image to docker hub:
+
+This image of your is accessible to everyone in this world..
+
+docker search budibudi 
+
+//to search for an image using command line...
+
+
+Session 4: Docker Swarm
+
+Swarm is nothing but the collection of nodes/computers
+
+e.g 4 machines
+
+1 machine to be manager 
+
+formerly master and slave.
+
+slave = worker nodes
+
+Step1. create 3 ubuntu machines (create two full clones of the existing maching)
+
+Step2: Change hostnames: nano /etc/hostname
+       Give a name to your nodes
+
+ ifconfig
+docker swarm init --advertise-addr 10.0.2.15  //to create a cluster...
+                                              //init means initialise
+                                              //copy paste the command to the                                               //worker nodes..
+//go to manager and type
+
+docker node ls
+
+docker service create --name emmanuel -p 8000:3000 --replicas 10 budibudi/ceit  //can be arunvel1988/arun
+
+docker service ls
+
+//on one of the workers
+
+docker container ls
+
+//back to manager
+
+docker container ps
+docker service ps emmanuel
+
+Assignment: You are given a task of creating a nginx server:
+cluster 3 nodes
+
+service name = nginxsvr
+replicas = 30
+
+NB: Nginx image uses port 8000...
+
+
+docker service create --name budi -p 3001:8000 --replicas 30 nginx
+
+
+Advanced: Portainer - it is the GUI on the manager to monitor the container and services in the swarm...
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
